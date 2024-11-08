@@ -34,4 +34,3 @@ def passphrase_generator():
 
         passphrase = separator.join(phrase_words)
         print(passphrase)
-
