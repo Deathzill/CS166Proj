@@ -1,6 +1,7 @@
 from aes_cipher import FileEncrypter, FileDecrypter, Pbkdf2Sha512Default
 import os
 
+#aes cipher from https://pypi.org/project/aes-cipher/
 def FileEncryption(FileName, password, outputFileName):
     salt = os.urandom(16)
     encrypter = FileEncrypter(Pbkdf2Sha512Default)
