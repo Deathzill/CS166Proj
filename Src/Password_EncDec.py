@@ -1,12 +1,10 @@
 from aes_cipher import FileEncrypter, FileDecrypter, Pbkdf2Sha512Default
-import os
 
 #aes cipher from https://pypi.org/project/aes-cipher/
 def FileEncryption(FileName, password, outputFileName):
-    salt = os.urandom(16)
     encrypter = FileEncrypter(Pbkdf2Sha512Default)
 
-    encrypter.Encrypt(FileName, [password], [salt])
+    encrypter.Encrypt(FileName, [password])
     enc_data = encrypter.GetEncryptedData()
     
     with open(outputFileName, 'wb') as file:
@@ -21,8 +19,4 @@ def FileDecryption(FileName, password):
 
     data = data.decode('utf-8')
 
-    print(data)
     return data
-
-FileEncryption("testDoc.txt", "pass", "testDoc.enc")
-FileDecryption("testDoc.enc", "pass")
