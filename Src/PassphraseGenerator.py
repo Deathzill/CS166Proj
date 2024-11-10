@@ -26,11 +26,11 @@ def passphrase_generator():
 
         if include_numbers:
             phrase_words_numbers = []
-            for i in range(0, num_words):
-                num_list = [random.randrange(1, num_words) for i in range(0,9)]
-                for j in num_list:
-                    phrase_words_numbers = [word + str(j) for word in phrase_words]
+            for word in phrase_words:
+                num = random.randint(0, 9)
+                phrase_words_numbers.append(word + str(num))
             phrase_words = phrase_words_numbers
+
 
         passphrase = separator.join(phrase_words)
         print(passphrase)
