@@ -8,8 +8,8 @@ from Password_Manager import initialize_encrypted_file, save_password, get_passw
 
 
 # This will print a message to the console
-print("Hello, World!")
-print("testing")
+print("Welcome to the Password Manager!")
+print()
 
 # Define paths
 filename = "Src/passwords.json"
@@ -19,7 +19,9 @@ encrypted_filename = "Src/passwords.json.enc"
 password = "your_password"
 
 # Initialize the encrypted file
+print("Checking for Initialized file")
 initialize_encrypted_file(filename, encrypted_filename, password)
+print()
 
 
 # Uncomment if needed
@@ -37,19 +39,23 @@ separator = "-"
 # Generate a password with the specified parameters
 generated_password = passphrase_generator(num_words, capitalize, include_numbers, separator)
 filename = 'Src/passwords.json'
+print("Password has been generated")
 print("Generated Password:", generated_password)
+print()
 
-# Step 2: Save new password for a website
-# This function handles decryption, updating, and re-encryption. 
-# Should be called save_password(filename, website, username, password, file_password):
+# Step 2: Save new password for a website. Function handles decryption, updating, and re-encryption. 
+# Invoke as save_password(filename, website, username, password, file_password):
 save_password(filename, 'example.com', 'user123', generated_password, password)
+print("Password has been saved to file and encrypted")
+print()
 
 # Step 3: Retrieve and print the password for the website to check if it saved correctly
 # Called as def get_password(filename, website, file_password):
 credentials = get_password(filename, 'example.com',password)
+print("File has been decrypted and read.")
 print("Retrieved credentials:", credentials)
+print()
 
 #****************************** Password Manager Testing Ends ***************************************
-
 app = App()
 app.mainloop()
