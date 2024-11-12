@@ -1,12 +1,4 @@
-from PassphraseGenerator import passphrase_generator
-from Password_EncDec import FileEncryption, FileDecryption
 from UserInterface import App
-
-def check():
-   print("checked")
-
-def generate():
-   print("generated")
 
 # This will print a message to the console
 print("Hello, World!")
