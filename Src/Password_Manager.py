@@ -1,7 +1,24 @@
+import os
 import json
 from Password_EncDec.FileEncryption import FileEncryption
 from Password_EncDec.FileDecryption import FileDecryption
 
+
+def initialize_encrypted_file(filename, encrypted_filename, password):
+    # Step 1: Encrypt passwords.json if passwords.json.enc does not exist
+    if not os.path.exists(encrypted_filename):
+        print(f"Encrypting {filename} to create {encrypted_filename}")
+        
+        # Check if passwords.json exists, create it if necessary
+        if not os.path.exists(filename):
+            print(f"Creating an empty {filename} file.")
+            with open(filename, "w") as f:
+                json.dump({}, f)  # Initialize with an empty JSON object
+
+        # Encrypt passwords.json to create passwords.json.enc
+        FileEncryption(filename, password, encrypted_filename)
+    else:
+        print(f"Encrypted file {encrypted_filename} already exists.")
 
 #Loads data from a JSON file.
 def load_data(filename):
