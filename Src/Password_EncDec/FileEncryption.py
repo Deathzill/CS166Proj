@@ -9,14 +9,3 @@ def FileEncryption(FileName, password, outputFileName):
     
     with open(outputFileName, 'wb') as file:
         file.write(enc_data)
-
-
-def FileDecryption(FileName, password):
-    decrypter = FileDecrypter(Pbkdf2Sha512Default)
-
-    decrypter.Decrypt(FileName, [password])
-    data = decrypter.GetDecryptedData()
-
-    data = data.decode('utf-8')
-
-    return data
