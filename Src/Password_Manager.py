@@ -33,11 +33,18 @@ def save_data(filename, data):
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
 
-
-# Adds new credentials (username and password) for a specific website and saves it in the JSON file, then re-encrypts the file.
+    
+# Save a new password or update the existing one. Saves to Json file and re-encrypts it.
 def save_password(filename, website, username, password, file_password):
+    # Decrypt, load, update, and re-encrypt
     FileDecryption(filename + ".enc", file_password)
     data = load_data(filename)
+    
+    if website in data:
+        print(f"Website '{website}' already exists. Updating password.")
+    else:
+        print(f"Saving new credentials for website '{website}'.")
+        
     data[website] = {"username": username, "password": password}
     save_data(filename, data)
     FileEncryption(filename, file_password, filename + ".enc")
@@ -49,3 +56,26 @@ def get_password(filename, website, file_password):
     data = load_data(filename)
     return data.get(website, "No credentials found for this website")
 
+# Delete credentials for a website. Aks for user cnfirmation before deleting.    
+def delete_password(filename, website, file_password):
+    # Decrypt, load data, and check if website exists
+    FileDecryption(filename + ".enc", file_password)
+    data = load_data(filename)
+    
+    if website in data:
+        # Ask for confirmation
+        confirmation = input(f"Are you sure you want to delete the credentials for '{website}'? (yes/no): ").strip().lower()
+        
+        if confirmation == 'yes':
+            del data[website]
+            print(f"Credentials for website '{website}' have been deleted.")
+            # Save and re-encrypt
+            save_data(filename, data)
+            FileEncryption(filename, file_password, filename + ".enc")
+        else:
+            print("Deletion cancelled.")
+    else:
+        print(f"No credentials found for website '{website}' to delete.")
+    
+    save_data(filename, data)
+    FileEncryption(filename, file_password, filename + ".enc")
