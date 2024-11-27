@@ -56,6 +56,10 @@ def get_password(filename, website, file_password):
     data = load_data(filename)
     return data.get(website, "No credentials found for this website")
 
+def get_all(filename, file_password):
+    data = load_data(filename)
+    return data
+
 # Delete credentials for a website. Aks for user cnfirmation before deleting.    
 def delete_password(filename, website, file_password):
     # Decrypt, load data, and check if website exists
