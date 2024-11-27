@@ -120,15 +120,20 @@ class PasswordViewerFrame(ctk.CTkFrame):
       self.save_button = ctk.CTkButton(self, text="View", command=self.view_passwords)
       self.save_button.grid(row=1, column=0, padx=10, pady=10, sticky="we")
 
+      self.passwords_text_box = ctk.CTkTextbox(self, height=200)
+      self.passwords_text_box.grid(row=2, column=0, padx=10, pady=10)
+      self.passwords_text_box.insert("0.0", "Press view to update")
+
    def view_passwords(self):
-      print(get_all("Src/passwords.json", "your_password"))
+      self.passwords_text_box.delete("0.0", str(sys.maxsize) + ".0")
+      self.passwords_text_box.insert("0.0", get_all("Src/passwords.json", "your_password"))
 
 class App(ctk.CTk):
    def __init__(self):
       super().__init__()
 
       self.title("Password Manager")
-      self.geometry("660x700")
+      self.geometry("720x710")
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
