@@ -126,7 +126,13 @@ class PasswordViewerFrame(ctk.CTkFrame):
 
    def view_passwords(self):
       self.passwords_text_box.delete("0.0", str(sys.maxsize) + ".0")
-      self.passwords_text_box.insert("0.0", get_all("Src/passwords.json", "your_password"))
+      data = get_all("Src/passwords.json", "your_password")
+      formatted_string = ""
+
+      for website, credentials in data.items():
+         formatted_string += f"website: {website}\nusername: {credentials['username']}\npassword: {credentials['password']}\n\n"
+      
+      self.passwords_text_box.insert("0.0", formatted_string)
 
 class App(ctk.CTk):
    def __init__(self):
