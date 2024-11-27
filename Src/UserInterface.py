@@ -1,5 +1,6 @@
 from PassphraseGenerator import passphrase_generator
 from PasswordGenerator import password_generator
+from Password_Manager import save_password, get_password, delete_password
 import sys
 
 # https://customtkinter.tomschimansky.com/
@@ -71,28 +72,57 @@ class PasswordGeneratorFrame(ctk.CTkFrame):
       self.result_text_box.delete("0.0", str(sys.maxsize) + ".0")
       self.result_text_box.insert("0.0", result)
 
-class PasswordManagementFrame(ctk.CTkFrame):
+class PasswordSaverFrame(ctk.CTkFrame):
    def __init__(self, master):
       super().__init__(master)
 
-      self.label = ctk.CTkLabel(self, text="Passwords")
+      self.label = ctk.CTkLabel(self, text="Password Saver")
       self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-      self.add_button = ctk.CTkButton(self, text="Add")
-      self.add_button.grid(row=1, column=0, padx=10, pady=10, sticky="we")
+      self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
+      self.website_entry.grid(row=1, column=0, padx=10, pady=10)
 
-      self.delete_button = ctk.CTkButton(self, text="Delete")
-      self.delete_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
+      self.username_entry = ctk.CTkEntry(self, placeholder_text="Username", height=50)
+      self.username_entry.grid(row=2, column=0, padx=10, pady=10)
 
-      self.view_button = ctk.CTkButton(self, text="View")
-      self.view_button.grid(row=3, column=0, padx=10, pady=10, sticky="we")
+      self.password_entry = ctk.CTkEntry(self, placeholder_text="Password", height=50)
+      self.password_entry.grid(row=3, column=0, padx=10, pady=10)
+
+      self.save_button = ctk.CTkButton(self, text="Save", command=self.save_password)
+      self.save_button.grid(row=4, column=0, padx=10, pady=10, sticky="we")
+
+   def save_password(self):
+      save_password("Src/passwords.json", self.website_entry.get(), self.username_entry.get(), self.password_entry.get(), "your_password")
+
+class PasswordDeleterFrame(ctk.CTkFrame):
+   def __init__(self, master):
+      super().__init__(master)
+
+      self.label = ctk.CTkLabel(self, text="Password Deleter")
+      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+
+      self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
+      self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+
+      self.save_button = ctk.CTkButton(self, text="Delete", command=self.delete_password)
+      self.save_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
+
+   def delete_password(self):
+      delete_password("Src/passwords.json", self.website_entry.get(), "your_password")
+
+class PasswordViewerFrame(ctk.CTkFrame):
+   def __init__(self, master):
+      super().__init__(master)
+
+      self.label = ctk.CTkLabel(self, text="Password Viewer")
+      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
 class App(ctk.CTk):
    def __init__(self):
       super().__init__()
 
       self.title("Password Manager")
-      self.geometry("660x370")
+      self.geometry("660x700")
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
@@ -100,5 +130,11 @@ class App(ctk.CTk):
       self.password_generator_frame = PasswordGeneratorFrame(self)
       self.password_generator_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n")
 
-      self.password_management_frame = PasswordManagementFrame(self)
-      self.password_management_frame.grid(row=0, column=2, padx=10, pady=10, sticky="n")
+      self.password_saver_frame = PasswordSaverFrame(self)
+      self.password_saver_frame.grid(row=1, column=0, padx=10, pady=10, sticky="n")
+
+      self.password_deleter_frame = PasswordDeleterFrame(self)
+      self.password_deleter_frame.grid(row=1, column=1, padx=10, pady=10, sticky="n")
+
+      self.password_viewer_frame = PasswordViewerFrame(self)
+      self.password_viewer_frame.grid(row=1, column=3, padx=10, pady=10, sticky="n")
