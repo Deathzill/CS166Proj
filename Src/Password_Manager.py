@@ -57,6 +57,7 @@ def get_password(filename, website, file_password):
     return data.get(website, "No credentials found for this website")
 
 def get_all(filename, file_password):
+    FileDecryption(filename + ".enc", file_password)
     data = load_data(filename)
     return data
 

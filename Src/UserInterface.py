@@ -1,6 +1,6 @@
 from PassphraseGenerator import passphrase_generator
 from PasswordGenerator import password_generator
-from Password_Manager import save_password, get_password, delete_password
+from Password_Manager import save_password, get_all, delete_password
 import sys
 
 # https://customtkinter.tomschimansky.com/
@@ -116,6 +116,12 @@ class PasswordViewerFrame(ctk.CTkFrame):
 
       self.label = ctk.CTkLabel(self, text="Password Viewer")
       self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+
+      self.save_button = ctk.CTkButton(self, text="View", command=self.view_passwords)
+      self.save_button.grid(row=1, column=0, padx=10, pady=10, sticky="we")
+
+   def view_passwords(self):
+      print(get_all("Src/passwords.json", "your_password"))
 
 class App(ctk.CTk):
    def __init__(self):
