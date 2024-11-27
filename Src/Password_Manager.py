@@ -36,9 +36,7 @@ def save_data(filename, data):
     
 # Save a new password or update the existing one. Saves to Json file and re-encrypts it.
 def save_password(filename, website, username, password, file_password):
-    # Decrypt, load, update, and re-encrypt
-    FileDecryption(filename + ".enc", file_password)
-    data = load_data(filename)
+    data = json.loads(FileDecryption(filename + ".enc", file_password))
     
     if website in data:
         print(f"Website '{website}' already exists. Updating password.")
@@ -52,35 +50,21 @@ def save_password(filename, website, username, password, file_password):
 
 # Retrieves credentials for a specific website by decrypting the JSON file, loading the data, and returning the saved credentials.
 def get_password(filename, website, file_password):
-    FileDecryption(filename + ".enc", file_password)
-    data = load_data(filename)
+    data = json.loads(FileDecryption(filename + ".enc", file_password))
     return data.get(website, "No credentials found for this website")
 
 def get_all(filename, file_password):
-    FileDecryption(filename + ".enc", file_password)
-    data = load_data(filename)
+    data = json.loads(FileDecryption(filename + ".enc", file_password))
     return data
 
 # Delete credentials for a website. Aks for user cnfirmation before deleting.    
 def delete_password(filename, website, file_password):
     # Decrypt, load data, and check if website exists
-    FileDecryption(filename + ".enc", file_password)
-    data = load_data(filename)
-    
+    data = json.loads(FileDecryption(filename + ".enc", file_password))
+
     if website in data:
-        # Ask for confirmation
-        confirmation = input(f"Are you sure you want to delete the credentials for '{website}'? (yes/no): ").strip().lower()
-        
-        if confirmation == 'yes':
-            del data[website]
-            print(f"Credentials for website '{website}' have been deleted.")
-            # Save and re-encrypt
-            save_data(filename, data)
-            FileEncryption(filename, file_password, filename + ".enc")
-        else:
-            print("Deletion cancelled.")
+        del data[website]
+        save_data(filename, data)
+        FileEncryption(filename, file_password, filename + ".enc")
     else:
         print(f"No credentials found for website '{website}' to delete.")
-    
-    save_data(filename, data)
-    FileEncryption(filename, file_password, filename + ".enc")
