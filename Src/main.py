@@ -22,11 +22,6 @@ print("Checking for Initialized file")
 initialize_encrypted_file(filename, password)
 print()
 
-
-# Uncomment if needed
-# FileEncryption("testDoc.txt", "pass", "testDoc.enc")
-# FileDecryption("testDoc.enc", "pass")
-
 #****************************** Password Manager Testing Starts ************************
 
 # Example parameters for passphrase_generator
@@ -62,11 +57,9 @@ print("File has been decrypted and read.")
 print("Retrieved credentials:", credentials)
 print()
 
-
 # Test deleting a password
 print("Deleting Entry")
 delete_password(filename, 'example.com', password)
-
 
 # Try retrieving again to confirm deletion
 credentials = get_password(filename, 'Instagram', password)
