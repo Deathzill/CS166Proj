@@ -1,6 +1,7 @@
 from PassphraseGenerator import passphrase_generator
 from PasswordGenerator import password_generator
 from Password_Manager import save_password, get_all, delete_password
+from PasswordStrengthChecker import check_password_strength
 import sys
 
 # https://customtkinter.tomschimansky.com/
@@ -134,6 +135,62 @@ class PasswordViewerFrame(ctk.CTkFrame):
       
       self.passwords_text_box.insert("0.0", formatted_string)
 
+class PasswordStrengthCheckerFrame(ctk.CTkFrame):
+   def __init__(self, master):
+      super().__init__(master)
+
+      self.label = ctk.CTkLabel(self, text="Password Checker")
+      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+
+      self.manual_password_entry = ctk.CTkEntry(self, placeholder_text="Enter Password", height=50)
+      self.manual_password_entry.grid(row=1, column=0, padx=10, pady=10)
+
+      self.check_button = ctk.CTkButton(self, text="Check Strength", command=self.check_strength)
+      self.check_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
+
+        # Label to display the strength of the password
+      self.strength_label = ctk.CTkLabel(self, text="Password Strength: ")
+      self.strength_label.grid(row=3, column=0, padx=10, pady=10, sticky="we")
+
+        # Label to display suggestions for improvement
+      self.suggestions_label = ctk.CTkTextbox(self, height=100, font=("Arial", 12), wrap="word", state="disabled")
+      self.suggestions_label.grid(row=4, column=0, padx=10, pady=10, sticky="we")
+
+   def check_strength(self):
+      password = self.manual_password_entry.get()
+      
+      if not password:
+            self.strength_label.configure(text="Password Strength: Please enter a password.", text_color="gray")
+
+            # Display a default placeholder in the suggestions label
+            self.suggestions_label.configure(state="normal")
+            self.suggestions_label.delete("0.0", "end")  # Clear previous suggestions
+            self.suggestions_label.insert("0.0", "Password strength suggestions will appear here.")  # Default text
+            self.suggestions_label.configure(state="disabled")
+
+            return  
+      strength, suggestions = check_password_strength(password)
+      
+      strength_color = {
+            "Strong": "green",
+            "Medium": "orange",
+            "Weak": "red"
+        }
+        
+      # Display strength
+      self.strength_label.configure(text=f"Password Strength: {strength}", text_color=strength_color.get(strength, "black"))
+
+      # Display suggestions for improvement
+      suggestions_text = "\n".join(f"• {s}" for s in suggestions) if suggestions else "Password is strong!"
+      self.suggestions_label.configure(state="normal")  # Enable the textbox for updating text
+      self.suggestions_label.delete("0.0", "end")  # Clear the previous text
+      self.suggestions_label.insert("0.0", suggestions_text)  # Insert new suggestions
+      self.suggestions_label.configure(state="disabled")  # Disable the textbox for editing
+
+
+
+
+
 class App(ctk.CTk):
    def __init__(self):
       super().__init__()
@@ -155,3 +212,9 @@ class App(ctk.CTk):
 
       self.password_viewer_frame = PasswordViewerFrame(self)
       self.password_viewer_frame.grid(row=1, column=3, padx=10, pady=10, sticky="n")
+
+      self.manual_password_checker_frame = PasswordStrengthCheckerFrame(self)
+      self.manual_password_checker_frame.grid(row=0, column=3, padx=10, pady=10, sticky="n")
+      
+
+      
