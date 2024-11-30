@@ -3,6 +3,7 @@ from PasswordGenerator import password_generator
 from Password_Manager import save_password, get_all, delete_password
 from PasswordStrengthChecker import check_password_strength
 import sys
+import tkinter.messagebox as messagebox
 
 # https://customtkinter.tomschimansky.com/
 import customtkinter as ctk
@@ -93,23 +94,42 @@ class PasswordSaverFrame(ctk.CTkFrame):
       self.save_button.grid(row=4, column=0, padx=10, pady=10, sticky="we")
 
    def save_password(self):
-      save_password("Src/passwords.json", self.website_entry.get(), self.username_entry.get(), self.password_entry.get(), "your_password")
+      save_password("Src/passwords.json.enc", self.website_entry.get(), self.username_entry.get(), self.password_entry.get(), "your_password")
+
 
 class PasswordDeleterFrame(ctk.CTkFrame):
-   def __init__(self, master):
-      super().__init__(master)
+    def __init__(self, master):
+        super().__init__(master)
 
-      self.label = ctk.CTkLabel(self, text="Password Deleter")
-      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+        self.label = ctk.CTkLabel(self, text="Password Deleter")
+        self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-      self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
-      self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
 
-      self.save_button = ctk.CTkButton(self, text="Delete", command=self.delete_password)
-      self.save_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
+        self.save_button = ctk.CTkButton(self, text="Delete", command=self.delete_password)
+        self.save_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
 
-   def delete_password(self):
-      delete_password("Src/passwords.json", self.website_entry.get(), "your_password")
+    def delete_password(self):
+        website = self.website_entry.get()
+        if not website:
+            messagebox.showwarning("Missing Information", "Please enter a website to delete.")
+            return
+
+        # Show confirmation dialog
+        confirm = messagebox.askyesno("Confirm Deletion", f"Are you sure you want to delete the password for '{website}'?")
+        if confirm:
+            try:
+                delete_password("Src/passwords.json.enc", website, "your_password")
+                messagebox.showinfo("Success", f"Password for '{website}' has been deleted.")
+                
+            except KeyError:
+                messagebox.showerror("Error", f"No credentials found for '{website}'.")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        else:
+            messagebox.showinfo("Cancelled", "Deletion cancelled.")
+
 
 class PasswordViewerFrame(ctk.CTkFrame):
    def __init__(self, master):
@@ -127,7 +147,7 @@ class PasswordViewerFrame(ctk.CTkFrame):
 
    def view_passwords(self):
       self.passwords_text_box.delete("0.0", str(sys.maxsize) + ".0")
-      data = get_all("Src/passwords.json", "your_password")
+      data = get_all("Src/passwords.json.enc", "your_password")
       formatted_string = ""
 
       for website, credentials in data.items():
@@ -186,8 +206,6 @@ class PasswordStrengthCheckerFrame(ctk.CTkFrame):
       self.suggestions_label.delete("0.0", "end")  # Clear the previous text
       self.suggestions_label.insert("0.0", suggestions_text)  # Insert new suggestions
       self.suggestions_label.configure(state="disabled")  # Disable the textbox for editing
-
-
 
 
 
