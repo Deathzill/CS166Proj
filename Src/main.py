@@ -12,15 +12,14 @@ print("Welcome to the Password Manager!")
 print()
 
 # Define paths
-filename = "Src/passwords.json"
-encrypted_filename = "Src/passwords.json.enc"
+filename = "Src/passwords.json.enc"
 
 # Password for encryption and decryption
 password = "your_password"
 
 # Initialize the encrypted file
 print("Checking for Initialized file")
-initialize_encrypted_file(filename, encrypted_filename, password)
+initialize_encrypted_file(filename, password)
 print()
 
 
@@ -38,15 +37,14 @@ separator = "-"
 
 # Generate a password with the specified parameters
 generated_password = passphrase_generator(num_words, capitalize, include_numbers, separator)
-filename = 'Src/passwords.json'
 print("Password has been generated")
 print("Generated Password:", generated_password)
 print()
 
-# Save new password for a website. Function handles decryption, updating, and re-encryption. 
-# Invoke as save_password(filename, website, username, password, file_password):
+
+# Save the password
 save_password(filename, 'example.com', 'user123', generated_password, password)
-print("Password has been saved to file and encrypted")
+print("Password has been saved.")
 print()
 
 save_password(filename, 'Canvas', 'user123', generated_password, password)
@@ -65,10 +63,10 @@ print("Retrieved credentials:", credentials)
 print()
 
 
-# Delete the password for a website
+# Test deleting a password
 print("Deleting Entry")
-delete_password(filename, 'Instagram', password)
-print()
+delete_password(filename, 'example.com', password)
+
 
 # Try retrieving again to confirm deletion
 credentials = get_password(filename, 'Instagram', password)
