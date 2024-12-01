@@ -207,8 +207,6 @@ class PasswordStrengthCheckerFrame(ctk.CTkFrame):
       self.suggestions_label.insert("0.0", suggestions_text)  # Insert new suggestions
       self.suggestions_label.configure(state="disabled")  # Disable the textbox for editing
 
-
-
 class App(ctk.CTk):
    def __init__(self):
       super().__init__()
@@ -233,6 +231,10 @@ class App(ctk.CTk):
 
       self.manual_password_checker_frame = PasswordStrengthCheckerFrame(self)
       self.manual_password_checker_frame.grid(row=0, column=3, padx=10, pady=10, sticky="n")
-      
 
-      
+      self.login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
+      password_input = self.login_dialog.get_input()
+
+      while (password_input != "your_password"):
+         self.login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
+         password_input = self.login_dialog.get_input()
