@@ -169,28 +169,71 @@ class PasswordDeleterFrame(ctk.CTkFrame):
 
 
 class PasswordViewerFrame(ctk.CTkFrame):
-   def __init__(self, master):
-      super().__init__(master)
+    def __init__(self, master):
+        super().__init__(master)
 
-      self.label = ctk.CTkLabel(self, text="Password Viewer")
-      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+        self.label = ctk.CTkLabel(self, text="Password Viewer")
+        self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-      self.save_button = ctk.CTkButton(self, text="View", command=self.view_passwords)
-      self.save_button.grid(row=1, column=0, padx=10, pady=10, sticky="we")
+        # Entry to input the website to look up
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
 
-      self.passwords_text_box = ctk.CTkTextbox(self, height=200)
-      self.passwords_text_box.grid(row=2, column=0, padx=10, pady=10)
-      self.passwords_text_box.insert("0.0", "Press view to update")
+        # Button to look up credentials
+        self.lookup_button = ctk.CTkButton(self, text="Look Up", command=self.lookup_credentials)
+        self.lookup_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
 
-   def view_passwords(self):
-      self.passwords_text_box.delete("0.0", str(sys.maxsize) + ".0")
-      data = get_all("Src/passwords.json.enc", "your_password")
-      formatted_string = ""
+        # Button to list all credentials
+        self.list_all_button = ctk.CTkButton(self, text="List All", command=self.list_all_credentials)
+        self.list_all_button.grid(row=3, column=0, padx=10, pady=10, sticky="we")
 
-      for website, credentials in data.items():
-         formatted_string += f"website: {website}\nusername: {credentials['username']}\npassword: {credentials['password']}\n\n"
-      
-      self.passwords_text_box.insert("0.0", formatted_string)
+        # Text box to display credentials
+        self.result_box = ctk.CTkTextbox(self, height=150, width=300)
+        self.result_box.grid(row=4, column=0, padx=10, pady=10, sticky="we")
+
+    def lookup_credentials(self):
+        website = self.website_entry.get()
+        if not website:
+            messagebox.showwarning("Missing Information", "Please enter a website to look up.")
+            return
+
+        try:
+            # Retrieve all credentials
+            credentials = get_all("Src/passwords.json.enc", "your_password")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
+            return
+
+        # Search for the website in the credentials
+        if website in credentials:
+            result = credentials[website]
+            self.result_box.delete("1.0", "end")  # Clear previous results
+            self.result_box.insert(
+                "1.0",
+                f"Website: {website}\nUsername: {result['username']}\nPassword: {result['password']}",
+            )
+        else:
+            messagebox.showinfo("Not Found", f"No credentials found for '{website}'.")
+            self.result_box.delete("1.0", "end")
+
+    def list_all_credentials(self):
+        try:
+            # Retrieve all credentials
+            credentials = get_all("Src/passwords.json.enc", "your_password")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
+            return
+
+        # Display all credentials in the result box
+        self.result_box.delete("1.0", "end")  # Clear previous results
+        if credentials:
+            for website, details in credentials.items():
+                self.result_box.insert(
+                    "end",
+                    f"Website: {website}\nUsername: {details['username']}\nPassword: {details['password']}\n\n",
+                )
+        else:
+            self.result_box.insert("1.0", "No credentials found.")
 
 class PasswordStrengthCheckerFrame(ctk.CTkFrame):
    def __init__(self, master):
@@ -249,7 +292,8 @@ class App(ctk.CTk):
       super().__init__()
 
       self.title("Password Manager")
-      self.geometry("720x710")
+      self.geometry("850x800")
+      
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")

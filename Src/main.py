@@ -6,11 +6,6 @@ from Password_EncDec.FileEncryption import FileEncryption
 from Password_EncDec.FileDecryption import FileDecryption
 from Password_Manager import initialize_encrypted_file, save_password, get_password, delete_password
 
-
-# This will print a message to the console
-print("Welcome to the Password Manager!")
-print()
-
 # Define paths
 filename = "Src/passwords.json.enc"
 
@@ -22,9 +17,19 @@ print("Checking for Initialized file")
 initialize_encrypted_file(filename, password)
 print()
 
+#loginpass = "passwordd"
+#FileEncryption(loginpass, loginpass, "loginpassword.enc", True)
+
+# This will print a message to the console
+print("Welcome to the Password Manager!")
+print()
+
+
+app = App()
+app.mainloop()
 
 #****************************** Password Manager Testing Starts ************************
-
+'''
 # Example parameters for passphrase_generator
 num_words = 4
 capitalize = True
@@ -67,11 +72,5 @@ delete_password(filename, 'example.com', password)
 # Try retrieving again to confirm deletion
 credentials = get_password(filename, 'Instagram', password)
 print("Retrieved credentials after deletion:", credentials)
-
 #****************************** Password Manager Testing Ends ***************************************
-
-#loginpass = "passwordd"
-#FileEncryption(loginpass, loginpass, "loginpassword.enc", True)
-
-app = App()
-app.mainloop()
+'''
