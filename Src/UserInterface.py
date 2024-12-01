@@ -243,7 +243,7 @@ class App(ctk.CTk):
 
    def password_check(self, password):
       try:
-         data = FileDecryption("loginpassword.enc", password)
+         data = FileDecryption("Src/loginpassword.enc", password)
 
          if password == data:
             return True
