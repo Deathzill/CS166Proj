@@ -33,7 +33,7 @@ class PassphraseGeneratorFrame(ctk.CTkFrame):
 
       self.result_text_box = ctk.CTkTextbox(self, height=50)
       self.result_text_box.grid(row=5, column=0, padx=10, pady=10)
-      self.result_text_box.insert("0.0", "Phrase3 Placeholder1")
+      self.result_text_box.insert("0.0", "")
 
       self.generate_button = ctk.CTkButton(self, text="Generate", command=self.generate)
       self.generate_button.grid(row=6, column=0, padx=10, pady=10, sticky="we")
@@ -65,7 +65,7 @@ class PasswordGeneratorFrame(ctk.CTkFrame):
 
       self.result_text_box = ctk.CTkTextbox(self, height=50)
       self.result_text_box.grid(row=5, column=0, padx=10, pady=10)
-      self.result_text_box.insert("0.0", "Password3 Placeholder1")
+      self.result_text_box.insert("0.0", "")
 
       self.generate_button = ctk.CTkButton(self, text="Generate", command=self.generate)
       self.generate_button.grid(row=6, column=0, padx=10, pady=10, sticky="we")
@@ -77,27 +77,51 @@ class PasswordGeneratorFrame(ctk.CTkFrame):
       self.result_text_box.insert("0.0", result)
 
 class PasswordSaverFrame(ctk.CTkFrame):
-   def __init__(self, master):
-      super().__init__(master)
+    def __init__(self, master):
+        super().__init__(master)
 
-      self.label = ctk.CTkLabel(self, text="Password Saver")
-      self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
+        self.label = ctk.CTkLabel(self, text="Password Saver")
+        self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-      self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
-      self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
 
-      self.username_entry = ctk.CTkEntry(self, placeholder_text="Username", height=50)
-      self.username_entry.grid(row=2, column=0, padx=10, pady=10)
+        self.username_entry = ctk.CTkEntry(self, placeholder_text="Username", height=50)
+        self.username_entry.grid(row=2, column=0, padx=10, pady=10)
 
-      self.password_entry = ctk.CTkEntry(self, placeholder_text="Password", height=50)
-      self.password_entry.grid(row=3, column=0, padx=10, pady=10)
+        self.password_entry = ctk.CTkEntry(self, placeholder_text="Password", height=50)
+        self.password_entry.grid(row=3, column=0, padx=10, pady=10)
 
-      self.save_button = ctk.CTkButton(self, text="Save", command=self.save_password)
-      self.save_button.grid(row=4, column=0, padx=10, pady=10, sticky="we")
+        self.save_button = ctk.CTkButton(self, text="Save", command=self.save_password)
+        self.save_button.grid(row=4, column=0, padx=10, pady=10, sticky="we")
 
-   def save_password(self):
-      save_password("Src/passwords.json.enc", self.website_entry.get(), self.username_entry.get(), self.password_entry.get(), "your_password")
+    def save_password(self):
+        website = self.website_entry.get()
+        username = self.username_entry.get()
+        password = self.password_entry.get()
 
+        if not website or not username or not password:
+            messagebox.showwarning("Missing Information", "Please fill in all fields before saving.")
+            return
+
+        # Check if credentials for the website already exist
+        existing_credentials = get_all("Src/passwords.json.enc", "your_password")
+        if website in existing_credentials:
+            confirm_replace = messagebox.askyesno(
+                "Replace Existing Credentials",
+                f"Credentials for {website} already exist. Do you want to replace them?"
+            )
+            if not confirm_replace:
+                return
+
+        # Save the credentials
+        save_password("Src/passwords.json.enc", website, username, password, "your_password")
+        messagebox.showinfo("Success", "Credentials have been saved successfully!")
+
+        # Clear the input fields after saving
+        self.website_entry.delete(0, "end")
+        self.username_entry.delete(0, "end")
+        self.password_entry.delete(0, "end")
 
 class PasswordDeleterFrame(ctk.CTkFrame):
     def __init__(self, master):
@@ -118,19 +142,30 @@ class PasswordDeleterFrame(ctk.CTkFrame):
             messagebox.showwarning("Missing Information", "Please enter a website to delete.")
             return
 
-        # Show confirmation dialog
+        # Check if credentials for the website exist
+        try:
+            existing_credentials = get_all("Src/passwords.json.enc", "your_password")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
+            return
+
+        if website not in existing_credentials:
+            messagebox.showerror("Error", f"No credentials found for '{website}'.")
+            return
+
+        # Show confirmation dialog if credentials exist
         confirm = messagebox.askyesno("Confirm Deletion", f"Are you sure you want to delete the password for '{website}'?")
         if confirm:
             try:
                 delete_password("Src/passwords.json.enc", website, "your_password")
                 messagebox.showinfo("Success", f"Password for '{website}' has been deleted.")
-                
-            except KeyError:
-                messagebox.showerror("Error", f"No credentials found for '{website}'.")
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {str(e)}")
         else:
             messagebox.showinfo("Cancelled", "Deletion cancelled.")
+
+        # Clear the input field after the process
+        self.website_entry.delete(0, "end")
 
 
 class PasswordViewerFrame(ctk.CTkFrame):
