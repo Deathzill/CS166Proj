@@ -4,6 +4,8 @@ from Password_Manager import save_password, get_all, delete_password
 from PasswordStrengthChecker import check_password_strength
 import sys
 import tkinter.messagebox as messagebox
+from Password_EncDec.FileDecryption import FileDecryption
+from aes_cipher import DataDecryptError
 
 # https://customtkinter.tomschimansky.com/
 import customtkinter as ctk
@@ -235,6 +237,19 @@ class App(ctk.CTk):
       self.login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
       password_input = self.login_dialog.get_input()
 
-      while (password_input != "your_password"):
-         self.login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
+      while (not self.password_check(password_input)):
+         self.login_dialog = ctk.CTkInputDialog(text="Incorrect Password. Try Again.", title="Login")
          password_input = self.login_dialog.get_input()
+
+   def password_check(self, password):
+      try:
+         data = FileDecryption("loginpassword.enc", password)
+
+         if password == data:
+            return True
+         else:
+            return False
+
+      except DataDecryptError:
+         return False
+         

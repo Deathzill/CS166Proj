@@ -70,5 +70,8 @@ print("Retrieved credentials after deletion:", credentials)
 
 #****************************** Password Manager Testing Ends ***************************************
 
+#loginpass = "passwordd"
+#FileEncryption(loginpass, loginpass, "loginpassword.enc", True)
+
 app = App()
 app.mainloop()
