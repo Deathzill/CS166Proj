@@ -83,14 +83,14 @@ class PasswordSaverFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text="Password Saver")
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
-        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website")
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10, sticky="we")
 
-        self.username_entry = ctk.CTkEntry(self, placeholder_text="Username", height=50)
-        self.username_entry.grid(row=2, column=0, padx=10, pady=10)
+        self.username_entry = ctk.CTkEntry(self, placeholder_text="Username")
+        self.username_entry.grid(row=2, column=0, padx=10, pady=10, sticky="we")
 
-        self.password_entry = ctk.CTkEntry(self, placeholder_text="Password", height=50)
-        self.password_entry.grid(row=3, column=0, padx=10, pady=10)
+        self.password_entry = ctk.CTkEntry(self, placeholder_text="Password")
+        self.password_entry.grid(row=3, column=0, padx=10, pady=10, sticky="we")
 
         self.save_button = ctk.CTkButton(self, text="Save", command=self.save_password)
         self.save_button.grid(row=4, column=0, padx=10, pady=10, sticky="we")
@@ -132,8 +132,8 @@ class PasswordDeleterFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text="Password Deleter")
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
-        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website")
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10, sticky="we")
 
         self.save_button = ctk.CTkButton(self, text="Delete", command=self.delete_password)
         self.save_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
@@ -180,8 +180,8 @@ class PasswordViewerFrame(ctk.CTkFrame):
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
         # Entry to input the website to look up
-        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website", height=50)
-        self.website_entry.grid(row=1, column=0, padx=10, pady=10)
+        self.website_entry = ctk.CTkEntry(self, placeholder_text="Website")
+        self.website_entry.grid(row=1, column=0, padx=10, pady=10, sticky="we")
 
         # Button to look up credentials
         self.lookup_button = ctk.CTkButton(self, text="Look Up", command=self.lookup_credentials)
@@ -246,8 +246,8 @@ class PasswordStrengthCheckerFrame(ctk.CTkFrame):
       self.label = ctk.CTkLabel(self, text="Password Checker")
       self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
 
-      self.manual_password_entry = ctk.CTkEntry(self, placeholder_text="Enter Password", height=50)
-      self.manual_password_entry.grid(row=1, column=0, padx=10, pady=10)
+      self.manual_password_entry = ctk.CTkEntry(self, placeholder_text="Enter Password")
+      self.manual_password_entry.grid(row=1, column=0, padx=10, pady=10, sticky="we")
 
       self.check_button = ctk.CTkButton(self, text="Check Strength", command=self.check_strength)
       self.check_button.grid(row=2, column=0, padx=10, pady=10, sticky="we")
@@ -296,7 +296,7 @@ class App(ctk.CTk):
       super().__init__()
 
       self.title("Password Manager")
-      self.geometry("820x775")
+      self.geometry("820x752")
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
