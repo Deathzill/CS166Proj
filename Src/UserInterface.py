@@ -296,7 +296,7 @@ class App(ctk.CTk):
       super().__init__()
 
       self.title("Password Manager")
-      self.geometry("850x800")
+      self.geometry("820x775")
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
