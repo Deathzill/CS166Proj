@@ -5,7 +5,38 @@ from PassphraseGenerator import passphrase_generator
 from Password_EncDec.FileEncryption import FileEncryption
 from Password_EncDec.FileDecryption import FileDecryption
 from Password_Manager import initialize_encrypted_file, save_password, get_password, delete_password
+import customtkinter as ctk
+from aes_cipher import DataDecryptError
 
+def password_check():
+   root = ctk.CTk()
+   root.withdraw()
+   login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
+
+   while True:
+      password_input = login_dialog.get_input()
+
+      if (password_input == None):
+         return None
+
+      try:
+         data = FileDecryption("Src/loginpassword.enc", password_input)
+         if password_input == data:
+            return password_input
+      except DataDecryptError:
+         print("Decryption error, check password")
+
+      login_dialog = ctk.CTkInputDialog(text="Incorrect password. Try again.", title="Login")
+
+ctk.set_appearance_mode("dark")
+password = password_check()
+
+if password != None:
+   app = App(password)
+   app.mainloop()
+
+#****************************** Password Manager Testing Starts ************************
+'''
 # Define paths
 filename = "Src/passwords.json.enc"
 
@@ -17,19 +48,14 @@ print("Checking for Initialized file")
 initialize_encrypted_file(filename, password)
 print()
 
-#loginpass = "passwordd"
-#FileEncryption(loginpass, loginpass, "loginpassword.enc", True)
+# Password generation, remove if using application for personal use
+# loginpass = "your_password"
+# FileEncryption(loginpass, loginpass, "Src/loginpassword.enc", True)
 
 # This will print a message to the console
 print("Welcome to the Password Manager!")
 print()
 
-
-app = App()
-app.mainloop()
-
-#****************************** Password Manager Testing Starts ************************
-'''
 # Example parameters for passphrase_generator
 num_words = 4
 capitalize = True

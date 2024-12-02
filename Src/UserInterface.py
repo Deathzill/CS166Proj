@@ -4,8 +4,6 @@ from Password_Manager import save_password, get_all, delete_password
 from PasswordStrengthChecker import check_password_strength
 import sys
 import tkinter.messagebox as messagebox
-from Password_EncDec.FileDecryption import FileDecryption
-from aes_cipher import DataDecryptError
 
 # https://customtkinter.tomschimansky.com/
 import customtkinter as ctk
@@ -77,8 +75,10 @@ class PasswordGeneratorFrame(ctk.CTkFrame):
       self.result_text_box.insert("0.0", result)
 
 class PasswordSaverFrame(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, password):
         super().__init__(master)
+
+        self.__file_password = password
 
         self.label = ctk.CTkLabel(self, text="Password Saver")
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
@@ -105,7 +105,7 @@ class PasswordSaverFrame(ctk.CTkFrame):
             return
 
         # Check if credentials for the website already exist
-        existing_credentials = get_all("Src/passwords.json.enc", "your_password")
+        existing_credentials = get_all("Src/passwords.json.enc", self.__file_password)
         if website in existing_credentials:
             confirm_replace = messagebox.askyesno(
                 "Replace Existing Credentials",
@@ -115,7 +115,7 @@ class PasswordSaverFrame(ctk.CTkFrame):
                 return
 
         # Save the credentials
-        save_password("Src/passwords.json.enc", website, username, password, "your_password")
+        save_password("Src/passwords.json.enc", website, username, password, self.__file_password)
         messagebox.showinfo("Success", "Credentials have been saved successfully!")
 
         # Clear the input fields after saving
@@ -124,8 +124,10 @@ class PasswordSaverFrame(ctk.CTkFrame):
         self.password_entry.delete(0, "end")
 
 class PasswordDeleterFrame(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, password):
         super().__init__(master)
+
+        self.__file_password = password
 
         self.label = ctk.CTkLabel(self, text="Password Deleter")
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
@@ -144,7 +146,7 @@ class PasswordDeleterFrame(ctk.CTkFrame):
 
         # Check if credentials for the website exist
         try:
-            existing_credentials = get_all("Src/passwords.json.enc", "your_password")
+            existing_credentials = get_all("Src/passwords.json.enc", self.__file_password)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
             return
@@ -157,7 +159,7 @@ class PasswordDeleterFrame(ctk.CTkFrame):
         confirm = messagebox.askyesno("Confirm Deletion", f"Are you sure you want to delete the password for '{website}'?")
         if confirm:
             try:
-                delete_password("Src/passwords.json.enc", website, "your_password")
+                delete_password("Src/passwords.json.enc", website, self.__file_password)
                 messagebox.showinfo("Success", f"Password for '{website}' has been deleted.")
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred: {str(e)}")
@@ -169,8 +171,10 @@ class PasswordDeleterFrame(ctk.CTkFrame):
 
 
 class PasswordViewerFrame(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, password):
         super().__init__(master)
+
+        self.__file_password = password
 
         self.label = ctk.CTkLabel(self, text="Password Viewer")
         self.label.grid(row=0, column=0, padx=10, pady=10, sticky="we")
@@ -199,7 +203,7 @@ class PasswordViewerFrame(ctk.CTkFrame):
 
         try:
             # Retrieve all credentials
-            credentials = get_all("Src/passwords.json.enc", "your_password")
+            credentials = get_all("Src/passwords.json.enc", self.__file_password)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
             return
@@ -219,7 +223,7 @@ class PasswordViewerFrame(ctk.CTkFrame):
     def list_all_credentials(self):
         try:
             # Retrieve all credentials
-            credentials = get_all("Src/passwords.json.enc", "your_password")
+            credentials = get_all("Src/passwords.json.enc", self.__file_password)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while retrieving credentials: {str(e)}")
             return
@@ -288,12 +292,11 @@ class PasswordStrengthCheckerFrame(ctk.CTkFrame):
       self.suggestions_label.configure(state="disabled")  # Disable the textbox for editing
 
 class App(ctk.CTk):
-   def __init__(self):
+   def __init__(self, password):
       super().__init__()
 
       self.title("Password Manager")
       self.geometry("850x800")
-      
 
       self.passphrase_generator_frame = PassphraseGeneratorFrame(self)
       self.passphrase_generator_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
@@ -301,34 +304,14 @@ class App(ctk.CTk):
       self.password_generator_frame = PasswordGeneratorFrame(self)
       self.password_generator_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n")
 
-      self.password_saver_frame = PasswordSaverFrame(self)
+      self.password_saver_frame = PasswordSaverFrame(self, password)
       self.password_saver_frame.grid(row=1, column=0, padx=10, pady=10, sticky="n")
 
-      self.password_deleter_frame = PasswordDeleterFrame(self)
+      self.password_deleter_frame = PasswordDeleterFrame(self, password)
       self.password_deleter_frame.grid(row=1, column=1, padx=10, pady=10, sticky="n")
 
-      self.password_viewer_frame = PasswordViewerFrame(self)
+      self.password_viewer_frame = PasswordViewerFrame(self, password)
       self.password_viewer_frame.grid(row=1, column=3, padx=10, pady=10, sticky="n")
 
       self.manual_password_checker_frame = PasswordStrengthCheckerFrame(self)
       self.manual_password_checker_frame.grid(row=0, column=3, padx=10, pady=10, sticky="n")
-
-      self.login_dialog = ctk.CTkInputDialog(text="Password:", title="Login")
-      password_input = self.login_dialog.get_input()
-
-      while (not self.password_check(password_input)):
-         self.login_dialog = ctk.CTkInputDialog(text="Incorrect Password. Try Again.", title="Login")
-         password_input = self.login_dialog.get_input()
-
-   def password_check(self, password):
-      try:
-         data = FileDecryption("Src/loginpassword.enc", password)
-
-         if password == data:
-            return True
-         else:
-            return False
-
-      except DataDecryptError:
-         return False
-         
