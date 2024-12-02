@@ -33,6 +33,7 @@ password = password_check()
 
 if password != None:
    app = App(password)
+   app.protocol("WM_DELETE_WINDOW", app.quit)
    app.mainloop()
 
 #****************************** Password Manager Testing Starts ************************
