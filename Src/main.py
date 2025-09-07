@@ -20,7 +20,7 @@ def password_check():
          return None
 
       try:
-         data = FileDecryption("Src/loginpassword.enc", password_input)
+         data = FileDecryption("loginpassword.enc", password_input)
          if password_input == data:
             return password_input
       except DataDecryptError:
